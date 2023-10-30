@@ -1,0 +1,86 @@
+diff --git a/node_modules/@book000/pixivts/dist/pixiv.js b/node_modules/@book000/pixivts/dist/pixiv.js
+index 51bb25c..929c6f1 100644
+--- a/node_modules/@book000/pixivts/dist/pixiv.js
++++ b/node_modules/@book000/pixivts/dist/pixiv.js
+@@ -30,6 +30,7 @@ class Pixiv {
+                 'App-OS': 'ios',
+                 'App-OS-Version': '14.6',
+                 'User-Agent': 'PixivIOSApp/7.13.3 (iOS 14.6; iPhone13,2)',
++                'Accept-Language': 'en-US',
+                 Authorization: `Bearer ${this.accessToken}`,
+             },
+             validateStatus: () => true,
+@@ -393,6 +394,64 @@ class Pixiv {
+             params: parameters,
+         });
+     }
++    async userIllusts(options) {
++        this.checkRequiredOptions(options, ['userId']);
++        const parameters = {
++            ...this.convertSnakeToCamel(options),
++            user_id: options.userId,
++            filter: options.filter || options_1.Filter.FOR_ANDROID,
++            type: options.type || 'illust',
++            offset: options.offset || 0,
++        };
++        return this.request({
++            method: 'GET',
++            path: '/v1/user/illusts',
++            params: parameters,
++        });
++    }
++    async IllustsRanking (options) {
++        this.checkRequiredOptions(options, ['mode']);
++        const parameters = {
++            mode: options.mode || "day",
++            filter: options.filter || options_1.Filter.FOR_ANDROID,
++            date:options.date || "",
++            offset: options.offset || 0,
++        };
++        return this.request({
++            method: 'GET',
++            path: '/v1/illust/ranking',
++            params: parameters,
++        });
++    }
++    async latestWork (options) {
++        const parameters = {
++            user_id: options.userId,
++            filter: options.filter || options_1.Filter.FOR_ANDROID,
++            offset: options.offset || 0,
++            restrict: options.restrict || options_1.BookmarkRestrict.PUBLIC,
++        };
++        return this.request({
++            method: 'GET',
++            path: '/v2/illust/follow',
++            params: parameters,
++        });
++    }
++    async IllustRelated (options) {
++        this.checkRequiredOptions(options, ['illustId']);
++        const parameters = {
++            illust_id: options.illustId,
++            filter: options.filter || options_1.Filter.FOR_ANDROID,
++            offset: options.offset || 0,
++            viewed: options.viewed || null,
++            seed_illust_ids:options.seed_illust_ids,
++
++        };
++        return this.request({
++            method: 'GET',
++            path: '/v2/illust/related',
++            params: parameters,
++        });
++    }
+     /**
+      * ユーザのイラストブックマークを取得する。
+      *
+@@ -402,7 +461,7 @@ class Pixiv {
+     async userBookmarksIllust(options) {
+         this.checkRequiredOptions(options, ['userId']);
+         const parameters = {
+-            ...this.convertSnakeToCamel(options),
++            //...this.convertSnakeToCamel(options),
+             user_id: options.userId,
+             restrict: options.restrict || options_1.BookmarkRestrict.PUBLIC,
+             filter: options.filter || options_1.Filter.FOR_IOS,

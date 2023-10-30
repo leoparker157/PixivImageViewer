@@ -1,0 +1,80 @@
+extends layout
+
+block content
+  section.mt-4.mb-5
+    .container.mb-4
+      .d-flex.justify-content-between.align-items-center
+        h1.font-weight-bold.title Search Illustrations
+        .form-container-filterSearch
+          form.row(action='/illust' method='GET')
+            .mb-3.col-md-6
+              input#query.form-control(type='text', name='query', value='', style='display:none;')
+              label.form-label(for='tags') Tags:
+              input#tags.form-control(type='text', name='tags', placeholder='Enter tags')
+            .mb-3.col-md-6
+              label.form-label(for='minCount') Minimum Bookmark :
+              input#minCount.form-control(type='number', name='minBookmarkCount', placeholder='Enter minimum bookmark count', min='0', max='999999',value='0', required)
+              .invalid-feedback
+                | Please enter a number between 0 and 999999.
+            .col-md-12.text-center
+              button.btn.btn-primary(type='submit') Search
+      div.btn-group.sort-by-button-group(role='group' aria-label='Sort Button Group')
+        button#sortDefault.sorting.default.btn.btn-secondary(type='button' data-sort-value="original-order") Default
+        button#sortLargeSmall.sorting.btn.btn-secondary(type='button' data-sort-value="totalview") Sort by total view
+        button#sortBookmarkNumber.sorting.btn.btn-secondary(type='button' data-sort-value="numberbookmarked") Sort by Bookmark Number
+        button#sortDate.sorting.btn.btn-secondary(type='button' data-sort-value="createdate" ) Sort by Date
+      .row
+        nav
+          div.filters
+            div.btn-group.button-group.d-flex.flex-wrap(id="filter-nav")  
+              button.button.tagbutton.is-checked.btn.btn-primary(data-filter="none",data-isPicked="default",type="button") ALL
+              button.button.tagbutton.btn.btn-outline-primary(data-filter=":not(.R-18)",data-isPicked="default",type="button") SAFE
+    .container-fluid
+      .row
+        .card-columns 
+          div#cards-section.grid.are-images-unloaded
+          div.page-load-status
+            div.loader-ellips.infinite-scroll-request
+              span.loader-ellips__dot
+              span.loader-ellips__dot
+              span.loader-ellips__dot
+              span.loader-ellips__dot
+            p.infinite-scroll-last End of content
+            p.infinite-scroll-error No more pages to load
+
+  script(src='/socket.io/socket.io.js')
+  script(src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.js")
+  script(src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.js") 
+  <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+  script(src='https://npmcdn.com/isotope-masonry-horizontal@2/masonry-horizontal.js')
+  script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
+  //- script.
+  //-     let ImageType="IllustSearch";
+  //-     const socket = io();
+  //-     imageCounter(ImageType);
+  //-     SocketGetImage(ImageType,"search");
+  //-     initSocketForInfiniteScroll(ImageType);
+  script.
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Get the value of the "mode" parameter from the URL
+    const mode = urlParams.get('query');
+
+    // Set the value of the "#mode" input field to the value of the "mode" parameter
+    document.querySelector('#query').value = mode;
+  script.
+        let ImageType="IllustSearch";
+        const socket = io();
+  script(src='/public/js/socket-imageCounter.js')
+  script.
+    imageCounter(ImageType);
+  script(src='/public/js/isotope-ImageAndButton.js')
+  script(src='/public/js/socket-Get-Image.js')
+  script(src='/public/js/ExtractQueryFromUrl.js')
+  script.
+    SocketGetImage(ImageType,"search");
+  script(src='/public/js/tag-Buttons-Function.js')
+  script(src='/public/js/infiniteScroll-LoadMoreImage.js')
+  script.
+    initSocketForInfiniteScroll(ImageType);
+
