@@ -11,6 +11,11 @@ async function relatedIllusts(fastify, request) {
 
 // Check if there is an active socket connection
 
+/**
+ * Returns the path to the downloads folder for related Illusts.
+ * If the folder does not exist, it will be created.
+ * @returns {string} The path to the downloads folder.
+ */
 const getDownloadsFolder = () => {
   const folderPath = path.join(__dirname, '..', 'image','related Illusts');// Modify this folder structure as needed
   if (!fs.existsSync(folderPath)) {
@@ -19,6 +24,13 @@ const getDownloadsFolder = () => {
   return folderPath;
 };
 
+/**
+ * Downloads an image from a given URL and saves it to a file path.
+ * @param {string} url_medium - The URL of the image to download.
+ * @param {string} filePath - The file path to save the downloaded image to.
+ * @param {Object} Pixiv - The Pixiv object containing the getAxiosImageStream method.
+ * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved.
+ */
 const downloadImage = async (url_medium, filePath,Pixiv) => {
   if (!fs.existsSync(filePath)) {
     const imageStreamResponse = await Pixiv.getAxiosImageStream(url_medium);
@@ -27,6 +39,15 @@ const downloadImage = async (url_medium, filePath,Pixiv) => {
   }
 };
 
+/**
+ * Processes an illustration object and downloads the medium-sized image to the specified folder.
+ * @param {Object} illustration - The illustration object to process.
+ * @param {Object} Pixiv - The Pixiv API object.
+ * @param {number} index - The index of the current illustration in the array.
+ * @param {string} downloadsFolder - The path to the folder where the image will be downloaded.
+ * @param {string} usersocketID - The ID of the user's socket.
+ * @returns {Promise} A promise that resolves when the image is downloaded.
+ */
 const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
   const illustId = illustration.id;
   const url_medium = illustration.image_urls.medium;
@@ -42,6 +63,18 @@ const processIllustration = async (illustration, Pixiv, index,downloadsFolder,us
 };
 
 
+  /**
+   * Retrieves related illustrations and their pages from Pixiv API.
+   * @async
+   * @function getRelatedIllustrationsAndPages
+   * @param {Object} options - The options object containing search parameters.
+   * @param {Object} pixiv - The Pixiv API client object.
+   * @param {Object} Pixiv - The Pixiv class.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise<Array>} - A promise that resolves to an array of related illustrations.
+   * @throws {Error} - If an error occurs while retrieving the related illustrations.
+   */
   const getRelatedIllustrationsAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
     try {
         let listimagefulldata = [];

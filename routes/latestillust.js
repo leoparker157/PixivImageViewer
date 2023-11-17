@@ -10,6 +10,11 @@ async function latestIllusts(fastify, request) {
 
   // Check if there is an active socket connection
 
+  /**
+   * Returns the path of the folder where the latest illusts will be saved.
+   * If the folder does not exist, it will be created.
+   * @returns {string} The path of the folder where the latest illusts will be saved.
+   */
   const getDownloadsFolder = () => {
     const folderPath = path.join(__dirname, '..', 'image','Latest Illusts');// Modify this folder structure as needed
     if (!fs.existsSync(folderPath)) {
@@ -18,6 +23,13 @@ async function latestIllusts(fastify, request) {
     return folderPath;
   };
 
+  /**
+   * Downloads an image from a given URL and saves it to a specified file path.
+   * @param {string} url_medium - The URL of the image to download.
+   * @param {string} filePath - The file path to save the downloaded image to.
+   * @param {Object} Pixiv - The Pixiv object containing the getAxiosImageStream method.
+   * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved.
+   */
   const downloadImage = async (url_medium, filePath,Pixiv) => {
     if (!fs.existsSync(filePath)) {
       const imageStreamResponse = await Pixiv.getAxiosImageStream(url_medium);
@@ -26,6 +38,15 @@ async function latestIllusts(fastify, request) {
     }
   };
 
+  /**
+   * Processes an illustration object and downloads the image to the specified folder.
+   * @param {Object} illustration - The illustration object to process.
+   * @param {Object} Pixiv - The Pixiv object used for downloading the image.
+   * @param {number} index - The index of the current illustration in the list.
+   * @param {string} downloadsFolder - The path to the folder where the image will be downloaded.
+   * @param {string} usersocketID - The ID of the user's socket connection.
+   * @returns {Promise} A promise that resolves when the image has finished downloading.
+   */
   const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
     const illustId = illustration.id;
     const url_medium = illustration.image_urls.medium;
@@ -39,6 +60,17 @@ async function latestIllusts(fastify, request) {
     await fastify.io.to(usersocketID).emit('LatestIllust-current', index); 
     return downloadPromise;
   };
+  /**
+   * Retrieves the latest illustrations and their pages from Pixiv based on the given options.
+   * @async
+   * @function getLatestIllustrationsAndPages
+   * @param {Object} options - The options to use for the Pixiv API request.
+   * @param {Object} pixiv - The Pixiv API client.
+   * @param {Object} Pixiv - The Pixiv API class.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise<Array>} - An array of the latest illustrations and their pages.
+   */
   const getLatestIllustrationsAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
     let listimagefulldata = [];
     const limit = options.tags ? 3 : 1;

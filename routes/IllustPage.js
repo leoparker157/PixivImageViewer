@@ -8,6 +8,11 @@ async function IllustPage(fastify, request) {
   const {getIllustrations} = require('../services/mainFunction.js');
   const checkAndRenamefile= require('../services/otherFunction.js');
 
+  /**
+   * Returns the path of the downloads folder for Illusts Search.
+   * If the folder does not exist, it creates it.
+   * @returns {string} The path of the downloads folder.
+   */
   const getDownloadsFolder = () => {
     const folderPath = path.join(__dirname, '..', 'image','Illusts Search');// Modify this folder structure as needed
     if (!fs.existsSync(folderPath)) {
@@ -16,6 +21,13 @@ async function IllustPage(fastify, request) {
     return folderPath;
   };
 
+  /**
+   * Downloads an image from a given URL to a specified file path if the file does not already exist.
+   * @param {string} url_medium - The URL of the image to download.
+   * @param {string} filePath - The file path to save the downloaded image to.
+   * @param {Object} Pixiv - The Pixiv object containing the getAxiosImageStream method used to retrieve the image stream.
+   * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved to the specified file path.
+   */
   const downloadImage = async (url_medium, filePath,Pixiv) => {
     if (!fs.existsSync(filePath)) {
       const imageStreamResponse = await Pixiv.getAxiosImageStream(url_medium);
@@ -24,6 +36,15 @@ async function IllustPage(fastify, request) {
     }
   };
 
+  /**
+   * Processes an illustration object and downloads the medium-sized image to the specified downloads folder.
+   * @param {Object} illustration - The illustration object to process.
+   * @param {Object} Pixiv - The Pixiv object to use for downloading the image.
+   * @param {number} index - The index of the current illustration in the search results.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise} A promise that resolves when the image has been downloaded.
+   */
   const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
     const illustId = illustration.id;
     const url_medium = illustration.image_urls.medium;
@@ -38,6 +59,17 @@ async function IllustPage(fastify, request) {
     return downloadPromise;
   };
 
+  /**
+   * Retrieves illustrations and their pages from Pixiv based on the provided options.
+   * @async
+   * @function getIllustsAndPages
+   * @param {Object} options - The options to use for the Pixiv search.
+   * @param {Object} pixiv - The Pixiv API client.
+   * @param {Object} Pixiv - The Pixiv class.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise<Array>} - An array of illustration objects.
+   */
   const getIllustsAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
     try {
       let listimagefulldata = [];

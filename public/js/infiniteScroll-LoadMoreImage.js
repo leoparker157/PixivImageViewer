@@ -1,7 +1,6 @@
 let infScroll;
 let nextUrl = "";
 const loaderEllips = document.querySelector('div.loader-ellips');
-
 function initInfScroll() {
     if (infScroll) {
         infScroll.destroy();
@@ -25,8 +24,8 @@ function initInfScroll() {
 function initSocketForInfiniteScroll(ImageType) {
     socket.on(`${ImageType}-nextUrl`, url => {
       if (url.includes('offset=null')) {
-        nextUrl = undefined;
         loaderEllips.classList.add('hide');
+        return;
       } else {
         nextUrl = url;
       }

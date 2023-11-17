@@ -1,3 +1,16 @@
+/**
+ * Checks if a file with the same ID and bookmark count exists in the downloads folder.
+ * If a file with the same ID exists, checks if it has a different bookmark count.
+ * If bookmark count doesn't match, renames the file.
+ * If a file with the same ID and bookmark count exists, no downloading is needed.
+ * If the file does not exist, logs a message.
+ * @param {Object} fs - The Node.js file system module.
+ * @param {Object} path - The Node.js path module.
+ * @param {string} filePath - The path to the file to be downloaded.
+ * @param {string} downloadsFolder - The path to the downloads folder.
+ * @param {Object} illustrations - The illustrations object containing the ID and bookmark count.
+ * @returns {void}
+ */
 async function checkAndRenamefile(fs, path, filePath, downloadsFolder, illustrations) {
   const bookmarkCount = illustrations.total_bookmarks  ; // Assuming the bookmark count is available in illustrations
   const existingFile = fs.readdirSync(downloadsFolder).find((file) => file.includes(`_id${illustrations.id}`));
@@ -18,7 +31,7 @@ async function checkAndRenamefile(fs, path, filePath, downloadsFolder, illustrat
           }
       }
   } else if (!fs.existsSync(filePath)) {
-      //console.log("File does not exist.");
+      console.log("File does not exist.");
   }
 }
 

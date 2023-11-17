@@ -9,6 +9,11 @@ async function Userpage(fastify, request) {
     const checkAndRenamefile= require('../services/otherFunction.js');
 
     // Check if there is an active socket connection
+    /**
+     * Returns the path of the downloads folder for user illustrations.
+     * If the folder does not exist, it creates it.
+     * @returns {string} The path of the downloads folder.
+     */
     const getDownloadsFolder = () => {
       const folderPath = path.join(__dirname, '..', 'image','User Illusts');// Modify this folder structure as needed
       if (!fs.existsSync(folderPath)) {
@@ -17,6 +22,13 @@ async function Userpage(fastify, request) {
       return folderPath;
     };
   
+    /**
+     * Downloads an image from a given URL to a specified file path.
+     * @param {string} url_medium - The URL of the image to download.
+     * @param {string} filePath - The file path to save the downloaded image to.
+     * @param {Object} Pixiv - The Pixiv object containing the getAxiosImageStream method.
+     * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved to the specified file path.
+     */
     const downloadImage = async (url_medium, filePath,Pixiv) => {
       if (!fs.existsSync(filePath)) {
         const imageStreamResponse = await Pixiv.getAxiosImageStream(url_medium);
@@ -25,6 +37,15 @@ async function Userpage(fastify, request) {
       }
     };
   
+    /**
+     * Processes an illustration object and downloads the image to the specified folder.
+     * @param {Object} illustration - The illustration object to process.
+     * @param {Object} Pixiv - The Pixiv object to use for downloading the image.
+     * @param {number} index - The index of the current illustration in the array.
+     * @param {string} downloadsFolder - The path to the folder where the image will be downloaded.
+     * @param {string} usersocketID - The ID of the user's socket connection.
+     * @returns {Promise} A promise that resolves when the image has been downloaded.
+     */
     const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
       const illustId = illustration.id;
       const url_medium = illustration.image_urls.medium;
@@ -38,6 +59,15 @@ async function Userpage(fastify, request) {
       await fastify.io.to(usersocketID).emit('User-current', index); 
       return downloadPromise;
     };
+    /**
+     * Retrieves user illustrations and pages based on the provided options.
+     * @param {Object} options - The options to use for retrieving the illustrations and pages.
+     * @param {Object} pixiv - The Pixiv object to use for retrieving the illustrations and pages.
+     * @param {Object} Pixiv - The Pixiv class to use for retrieving the illustrations and pages.
+     * @param {string} downloadsFolder - The folder to download the illustrations to.
+     * @param {string} usersocketID - The ID of the user's socket.
+     * @returns {Array} An array of the retrieved illustrations and pages.
+     */
     const getUserIllustrationsAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
       let listimagefulldata = [];
       let numpage = 0;
@@ -68,6 +98,14 @@ async function Userpage(fastify, request) {
       }
       return listimagefulldata;
     };
+    /**
+     * Retrieves user details and downloads their avatar image.
+     * @param {Object} pixiv - The Pixiv API client.
+     * @param {Object} options - The options for the user detail request.
+     * @param {Object} Pixiv - The Pixiv class.
+     * @param {string} downloadsFolder - The path to the downloads folder.
+     * @returns {Object} - The user detail object.
+     */
     const getUserDetailPage = async (pixiv, options,Pixiv,downloadsFolder) => {
       try{
         let userDetail  = await getUserDetail(pixiv, options);

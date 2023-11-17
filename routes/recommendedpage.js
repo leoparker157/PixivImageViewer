@@ -11,6 +11,11 @@ async function recommendedpage(fastify, request) {
 
   // Check if there is an active socket connection
 
+  /**
+   * Returns the path to the folder where recommended illusts will be saved.
+   * If the folder doesn't exist, it will be created.
+   * @returns {string} The path to the recommended illusts folder.
+   */
   const getDownloadsFolder = () => {
     const folderPath = path.join(__dirname, '..', 'image','Recommended Illusts');// Modify this folder structure as needed
     if (!fs.existsSync(folderPath)) {
@@ -19,6 +24,13 @@ async function recommendedpage(fastify, request) {
     return folderPath;
   };
 
+  /**
+   * Downloads an image from a given URL to a specified file path using the provided Pixiv object.
+   * @param {string} url_medium - The URL of the image to download.
+   * @param {string} filePath - The file path to save the downloaded image to.
+   * @param {object} Pixiv - The Pixiv object used to make the image stream request.
+   * @returns {Promise<void>} - A Promise that resolves when the image has been downloaded and saved to the specified file path.
+   */
   const downloadImage = async (url_medium, filePath,Pixiv) => {
     if (!fs.existsSync(filePath)) {
       const imageStreamResponse = await Pixiv.getAxiosImageStream(url_medium);
@@ -27,6 +39,15 @@ async function recommendedpage(fastify, request) {
     }
   };
 
+  /**
+   * Processes an illustration object and downloads the image to the specified folder.
+   * @param {Object} illustration - The illustration object to process.
+   * @param {Object} Pixiv - The Pixiv object used for downloading the image.
+   * @param {number} index - The index of the current illustration in the list.
+   * @param {string} downloadsFolder - The path to the folder where the image will be downloaded.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise} A promise that resolves when the image has been downloaded.
+   */
   const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
     const illustId = illustration.id;
     const url_medium = illustration.image_urls.medium;
@@ -41,6 +62,17 @@ async function recommendedpage(fastify, request) {
     return downloadPromise;
   };
 
+  /**
+   * Retrieves recommended illustrations and pages based on the provided options.
+   * @async
+   * @function getRecommendedIllustrationsAndPages
+   * @param {Object} options - The options to use for retrieving the recommended illustrations and pages.
+   * @param {Object} pixiv - The Pixiv object to use for retrieving the illustrations.
+   * @param {Object} Pixiv - The Pixiv class to use for retrieving the illustrations.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise<Array>} - A promise that resolves with an array of recommended illustrations and pages.
+   */
   const getRecommendedIllustrationsAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID)=> {
     let listimagefulldata = [];
     const limit = options.tags ? 5 : 1;

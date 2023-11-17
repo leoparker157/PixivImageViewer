@@ -12,6 +12,12 @@ async function RankingPage(fastify, request) {
   
 
 
+  /**
+   * Returns the path of the folder where the downloaded ranking illusts are stored.
+   * If the folder doesn't exist, it creates it.
+   *
+   * @returns {string} The path of the downloads folder.
+   */
   const getDownloadsFolder = () => {
     const folderPath = path.join(__dirname, '..', 'image','Ranking Illusts');// Modify this folder structure as needed
     if (!fs.existsSync(folderPath)) {
@@ -20,6 +26,13 @@ async function RankingPage(fastify, request) {
     return folderPath;
   };
 
+  /**
+   * Downloads an image from a given URL and saves it to a file path.
+   * @param {string} url_medium - The URL of the image to download.
+   * @param {string} filePath - The file path to save the downloaded image to.
+   * @param {Object} Pixiv - The Pixiv object containing the getAxiosImageStream method.
+   * @returns {Promise<void>} - A Promise that resolves when the image is downloaded and saved.
+   */
   const downloadImage = async (url_medium, filePath,Pixiv) => {
     if (!fs.existsSync(filePath)) {
       const imageStreamResponse = await Pixiv.getAxiosImageStream(url_medium);
@@ -28,6 +41,15 @@ async function RankingPage(fastify, request) {
     }
   };
 
+  /**
+   * Processes an illustration object and downloads the image.
+   * @param {Object} illustration - The illustration object to process.
+   * @param {Object} Pixiv - The Pixiv object to use for downloading.
+   * @param {number} index - The index of the illustration in the ranking.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Promise} A promise that resolves when the image is downloaded.
+   */
   const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
     const illustId = illustration.id;
     const url_medium = illustration.image_urls.medium;
@@ -44,6 +66,15 @@ async function RankingPage(fastify, request) {
   };
   
 
+  /**
+   * Retrieves ranking illustrations and processes them.
+   * @param {Object} options - The options for the ranking page.
+   * @param {Object} pixiv - The Pixiv API object.
+   * @param {Object} Pixiv - The Pixiv class.
+   * @param {string} downloadsFolder - The path to the downloads folder.
+   * @param {string} usersocketID - The ID of the user's socket.
+   * @returns {Array} An array of illustration data.
+   */
   const getRakingAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
     try {
       let listimagefulldata = [];

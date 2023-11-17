@@ -16,7 +16,6 @@ async function isAuthenticated(request, reply) {
     const result = await setupPixiv(refreshToken);
     if (!result) {
       // Handle the case where setupPixiv returns null or fails
-      //console.log('Wrong refresh token or refresh token expired');
       reply.code(400).send('Wrong refresh token or refresh token expired');
       return ;
     }
