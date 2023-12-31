@@ -2,13 +2,10 @@ extends layout
 
 block content
   section.mt-4.mb-5
-    .d-flex.justify-content-between.align-items-center
-      .container.mb-4
-      .d-flex.align-items-center.mb-3
-        div
-          // Add a div for the user avatar here
-          h1.font-weight-bold.title.m-0.ml-3 Illustration Related
-          .form-container-filterSearch
+    .container.mb-4
+      .d-flex.justify-content-between.align-items-center
+        h1.font-weight-bold.title Latest Image Gallery
+        .form-container-filterSearch
           form.row(action='/related' method='GET')
             .mb-3.col-md-6
               label.form-label(for='tags') Tags:
@@ -20,8 +17,6 @@ block content
                 | Please enter a number between 0 and 999999.
             .col-md-12.text-center
               button.btn.btn-primary(type='submit') Search
-      div.container
-          .row#imageGalleryRow
       div.btn-group.sort-by-button-group(role='group' aria-label='Sort Button Group')
         button#sortDefault.sorting.default.btn.btn-secondary(type='button' data-sort-value="original-order") Default
         button#sortLargeSmall.sorting.btn.btn-secondary(type='button' data-sort-value="totalview") Sort by total view
@@ -35,7 +30,7 @@ block content
               button.button.tagbutton.btn.btn-outline-primary(data-filter=":not(.R-18)",data-isPicked="default",type="button") SAFE
     .container-fluid
       .row
-        .card-columns
+        .card-columns 
           div#cards-section.grid.are-images-unloaded
           div.page-load-status
             div.loader-ellips.infinite-scroll-request

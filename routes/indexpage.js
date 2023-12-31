@@ -20,6 +20,7 @@ async function indexPage(fastify, opts) {
         refreshToken = encryptedToken ? decrypt(encryptedToken, secretKey) : null;
       } catch (error) {
         request.session.refreshToken = undefined;
+        console.log("error: refreshToken not found")
       }
 
       // Get the sessionId from the cookies
