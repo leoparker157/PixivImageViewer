@@ -50,19 +50,33 @@ async function RankingPage(fastify, request) {
    * @param {string} usersocketID - The ID of the user's socket.
    * @returns {Promise} A promise that resolves when the image is downloaded.
    */
-  const processIllustration = async (illustration, Pixiv, index,downloadsFolder,usersocketID) => {
+  const processIllustration = async (illustration, Pixiv, index, downloadsFolder, usersocketID) => {
     const illustId = illustration.id;
-    const url_medium = illustration.image_urls.medium;
     const title = illustration.title;
     const total_bookmarks = illustration.total_bookmarks;
-    const safeTitle = sanitize(`${title}_id:${illustId}`);
-    illustration.filename = `${safeTitle}.jpg`;
-    const filePath = path.join(downloadsFolder, `${safeTitle}.jpg`);
-    checkAndRenamefile(fs, path, filePath, downloadsFolder, illustration);
-    const downloadPromise = downloadImage(url_medium, filePath,Pixiv);
-    await fastify.io.to(usersocketID).emit('Ranking-current', index); 
-    return downloadPromise;
-
+    filenames=[];
+    if (illustration.page_count > 1) {
+      const pages = illustration.meta_pages.map((page, pageIndex) => {
+        const pageSafeTitle = sanitize(`${title}_id:${illustId}_page${pageIndex + 1}`);
+        filenames.push(`${pageSafeTitle}.jpg`); // Add filename to array
+        const pageFilePath = path.join(downloadsFolder, `${pageSafeTitle}.jpg`);
+        return { url: page.image_urls.medium, filePath: pageFilePath };
+      });
+      illustration.filename = filenames; // Assign filenames array to illustration
+      const downloadPromises = pages.map(async (page, pageIndex) => {
+        await downloadImage(page.url, page.filePath, Pixiv);
+      });
+      await fastify.io.to(usersocketID).emit('Ranking-current', index);
+      return Promise.all(downloadPromises);
+    } else {
+      const url_medium = illustration.image_urls.medium;
+      const safeTitle = sanitize(`${title}_id:${illustId}`);
+      illustration.filename = [`${safeTitle}.jpg`];
+      const filePath = path.join(downloadsFolder, `${safeTitle}.jpg`);
+      const downloadPromise = downloadImage(url_medium, filePath, Pixiv);
+      await fastify.io.to(usersocketID).emit('Ranking-current', index);
+      return downloadPromise;
+    }
   };
   
 
@@ -78,7 +92,7 @@ async function RankingPage(fastify, request) {
   const getRakingAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
     try {
       let listimagefulldata = [];
-      const limit = options.tags ? 2 : 1;
+      const limit = options.tags ? 2 : 1; //Normal =1 loop get images = 30, search by tags=2
       for (let i = 0; i < limit; i++) {
         let {illustrations,nextURL} = await getRankingIllusts(pixiv, options);
         const total = illustrations.length;
