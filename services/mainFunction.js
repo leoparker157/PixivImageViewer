@@ -37,6 +37,16 @@ async function getBookmarkedIllustrations(pixiv, options) {
     nextURL: response.data.next_url
   };
 }
+async function getUserBookmarkedIllustrations(pixiv, options) {
+  let response = await pixiv.userBookmarksIllust(options);
+  let bookmarkedIllustrations = response.data.illusts;
+  let filteredIlustrations = filterIllustrations(bookmarkedIllustrations, options);
+  return {
+    illustrations: filteredIlustrations,
+    nextURL: response.data.next_url
+  };
+}
+
 
 
   async function getRecommendedIllustrations(pixiv, options) {
@@ -136,6 +146,7 @@ async function getBookmarkedIllustrations(pixiv, options) {
         getRankingIllusts,
         getLatestIllustrations,
         getRelatedIllustrations,
+        getUserBookmarkedIllustrations,
     }
     ;
 

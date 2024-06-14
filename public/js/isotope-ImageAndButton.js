@@ -52,3 +52,9 @@ let iso2 = new Isotope(tagbutton, {
         }
     }
 });
+document.getElementById('rearrangeButton').addEventListener('click', function() {
+    imagesLoaded('.grid', function() {
+        iso.layout();  // This will trigger Isotope to re-arrange the items
+    });
+});
+

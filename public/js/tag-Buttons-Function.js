@@ -1,5 +1,9 @@
 // Define an array to store filters
 var filters = [];
+
+// Define variables to store current sort settings
+var currentSortValue = 'original-order';
+var currentSortOrder = true; // true for ascending, false for descending
 // Add a click event listener to the '.filters' element
 document.querySelector('.filters').addEventListener('click', function(event) {
     // Get the element that triggered the click event
@@ -80,7 +84,7 @@ document.querySelector('.sort-by-button-group').addEventListener('click', functi
     if (!event.target.matches('.sorting')) {
         return;
     }
-
+    
     const sortValue = event.target.getAttribute('data-sort-value');
     const sortingButtons = document.querySelectorAll('.sorting');
     if (!event.target.classList.contains('default')) {
@@ -107,6 +111,9 @@ document.querySelector('.sort-by-button-group').addEventListener('click', functi
             sortUp(sortValue);
         }
     }
+    // Update the current sort settings
+    currentSortValue = sortValue;
+    currentSortOrder = !event.target.textContent.includes('▼');
     // Change is-checked class on buttons
     const buttonGroup = event.target.parentNode;
     buttonGroup.querySelectorAll('.is-checked').forEach(button => {
@@ -162,3 +169,11 @@ function sortDown(sortValue) {
     });
 }
 ////////Sorting///////////////////////////////////
+// Function to re-apply sorting after new images are loaded
+function applyCurrentSort() {
+    iso.arrange({
+        sortBy: currentSortValue,
+        sortAscending: currentSortOrder
+    });
+}
+//applyCurrentSort(); in socket-get-image.js

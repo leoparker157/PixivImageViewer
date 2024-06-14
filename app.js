@@ -61,6 +61,7 @@ fastify.register(require('./routes/IllustPage'));
 fastify.register(require('./routes/rankingpage'));
 fastify.register(require('./routes/latestillust'));
 fastify.register(require('./routes/relatedIllusts'));
+fastify.register(require('./routes/userbookmarkpage'));
 
 
 // Define your routes

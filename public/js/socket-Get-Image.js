@@ -83,7 +83,7 @@ async function  SocketGetImage(ImageType,ChangeTtitle) {
             const isMuted = val.is_muted;
             const illustAiType = val.illust_ai_type;
             const illustBookStyle = val.illust_book_style;
-            var sanitizeddecodedFilename=decodedFilename.replace(/[\s:\/+(,)&●!！\-]/g, '-');
+            var sanitizeddecodedFilename=decodedFilename.replace(/[\s:\/+(,)&●!！.\-]/g, '-');
             var pixivLink = 'https://www.pixiv.net/en/artworks/' + illustId;
             var tagsString = tags.map(tag => tag.translated_name || tag.name).join(',');
             
@@ -96,14 +96,6 @@ async function  SocketGetImage(ImageType,ChangeTtitle) {
                         <img class="d-block w-100 card-img ${isBookmarked ? 'bookmarked' : ''}" src="${downloadsPath}/${page}"alt="${page}">
                       </div>`).join('')}
                   </div>
-                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel-${sanitizeddecodedFilename}" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#carousel-${sanitizeddecodedFilename}" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                  </button>
                 </div>
               <div class="overlay">
                 <h2 class=" card-title">name: ${decodedFilename}</h2>
@@ -150,6 +142,7 @@ async function  SocketGetImage(ImageType,ChangeTtitle) {
             imagesLoaded(imageElement).on('always', function() {
                 iso.appended(imageElement);
                 iso.layout();
+                applyCurrentSort();
             });
         });
         

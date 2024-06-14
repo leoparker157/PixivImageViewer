@@ -88,7 +88,7 @@ async function IllustPage(fastify, request) {
   const getIllustsAndPages = async (options,pixiv,Pixiv,downloadsFolder,usersocketID) => {
     try {
       let listimagefulldata = [];
-      const limit = options.tags ? 7 : 1; //Normal =1 loop get images = 30, search by tags=7
+      const limit = options.tags ? 30 : 1; //Normal =1 loop get images = 30, search by tags=7
       for (let i = 0; i < limit; i++) {
         let {illustrations,nextURL} = await getIllustrations(pixiv, options);
         const total = illustrations.length;
