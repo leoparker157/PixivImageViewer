@@ -1,5 +1,4 @@
 const isAuthenticated = require('../middleware/isAuthenticated'); // Import the middleware
-
 const activeTabs = {};
 async function Userpage(fastify, request) {
     fastify.addHook('preHandler', isAuthenticated)
@@ -98,7 +97,6 @@ async function Userpage(fastify, request) {
       // Pass 'index' as an argument to 'processIllustration'
       return processIllustration(illustration, Pixiv, index,downloadsFolder,usersocketID);
     });
-
          // Wait for all promises to resolve
         await Promise.all(promises);
         // Add the illustrations to the list
@@ -106,9 +104,9 @@ async function Userpage(fastify, request) {
         if (nextURL != null) {
             
             let urlParams = Pixiv.parseQueryString(nextURL);
-            options.offset = urlParams["offset"];
+            options.maxBookmarkId = urlParams["max_bookmark_id"];
           } else {
-            options.offset = null;
+            options.maxBookmarkId = null;
             break;
           }
       }
@@ -176,7 +174,7 @@ async function Userpage(fastify, request) {
           options.tags = tags;
         }
         const downloadsFolder = getDownloadsFolder();
-        options.offset = undefined;
+        options.maxBookmarkId = undefined;
         const userId = request.params.id;
         options.userId = userId;
         const UserDetail= await getUserDetailPage(pixiv,options,Pixiv,downloadsFolder);
@@ -206,7 +204,7 @@ async function Userpage(fastify, request) {
 
         const listimagefulldata = await getUserBookmarkedIllustrationsAndPages(options,pixiv,Pixiv,downloadsFolder,usersocketID);
         console.log("listimagefulldata return:",listimagefulldata);
-        let nextUrl = `/userbookmarkpage/${options.userId}/next-page-url?offset=${options.offset}`;
+        let nextUrl = `/userbookmarkpage/${options.userId}/next-page-url?max_bookmark_id=${options.maxBookmarkId}`;
         if (options.tags || options.minBookmarkCount) {
           nextUrl += `&tags=${options.tags}&minBookmarkCount=${options.minBookmarkCount}`;
         }
@@ -247,7 +245,7 @@ async function Userpage(fastify, request) {
           }
          const downloadsFolder = getDownloadsFolder();
         options.userId = request.params.id;
-        options.offset = request.query.offset;
+        options.maxBookmarkId = request.query.max_bookmark_id;
         const userId = request.params.id;
         await reply.view('indexUserBookmark.pug', {request});
         // Get the user's room ID and socket ID
@@ -259,7 +257,7 @@ async function Userpage(fastify, request) {
         const usersocketID = activeTabs[UserRoom];
         const listimagefulldata = await getUserBookmarkedIllustrationsAndPages(options,pixiv,Pixiv,downloadsFolder,usersocketID);
         console.log("listimagefulldata return:",listimagefulldata);
-        let nextUrl = `/userbookmarkpage/${options.userId}/next-page-url?offset=${options.offset}`;
+        let nextUrl = `/userbookmarkpage/${options.userId}/next-page-url?max_bookmark_id=${options.maxBookmarkId}`;
         if (options.tags || options.minBookmarkCount) {
           nextUrl += `&tags=${options.tags}&minBookmarkCount=${options.minBookmarkCount}`;
         }

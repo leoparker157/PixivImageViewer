@@ -3,13 +3,11 @@ const activeTabs = {};
 async function latestIllusts(fastify, request) {
   fastify.addHook('preHandler', isAuthenticated)
   const { v4: uuidv4 } = require('uuid');
-
   const {axios,fs,path,sanitize}=require('../services/initialsetup.js');
   const {getLatestIllustrations} = require('../services/mainFunction.js');
   const checkAndRenamefile= require('../services/otherFunction.js');
 
   // Check if there is an active socket connection
-
   /**
    * Returns the path of the folder where the latest illusts will be saved.
    * If the folder does not exist, it will be created.
