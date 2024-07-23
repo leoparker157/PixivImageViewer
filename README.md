@@ -3,6 +3,8 @@
 
 PixivImageViewer is  my hobby project, a light web application built with Fastify, JavaScript and Pug using [@book000/pixivts](https://www.npmjs.com/package/@book000/pixivts) with some modifications. It provides a front-end gallery for users to browse the illustrations on Pixiv.
 
+![image](https://github.com/user-attachments/assets/099043ee-18ee-41af-8943-a0e44b49eb81)
+
 **Notice: This app only provides a lightweight image frontend, allowing users to find and access their desired illustrations. It does not include a download option
 
 **Note:**
