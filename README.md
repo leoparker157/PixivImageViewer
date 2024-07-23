@@ -6,8 +6,6 @@ PixivImageViewer is  my hobby project, a light web application built with Fastif
 **Notice: This app only provides a lightweight image frontend, allowing users to find and access their desired illustrations. It does not include a download option
 
 **Note:**
-
- **Due to Pixiv no longer supporting login using a username and password, you must have a refresh token in order to log in**
  
 **Due to Pixiv's restrictions on using direct image links, this app will download the images to the `image/` folder inside the project directory.**
 
