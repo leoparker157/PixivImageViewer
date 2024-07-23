@@ -2,6 +2,7 @@
 const { setupPixiv } = require('../services/initialsetup');
 const { encrypt, decrypt } = require('../services/EncryptAndDecrypt');
 const { v4: uuidv4 } = require('uuid');
+const { exec } = require('child_process');
 
 // Define the LoginByRefreshToken function
 async function LoginByRefreshToken(fastify, opts) {
@@ -19,7 +20,24 @@ async function LoginByRefreshToken(fastify, opts) {
 
   // Handle POST request to /login
   fastify.post('/login', async (request, reply) => {
-    const { refreshToken } = request.body;
+    let refreshToken = null;
+    try {
+      const stdout = await new Promise((resolve, reject) => {
+        exec('node services/pixiv_token.js login', (error, stdout) => {
+        resolve(stdout);
+        });
+      });
+  
+      if (stdout.includes('refresh_token')) {
+        const match = stdout.match(/refresh_token: ([\w-]+)/);
+        refreshToken = match ? match[1] : null;
+      } else {
+        reply.view('error.pug', { error: 'refresh_token not found' });
+      }
+    } catch (error) {
+      reply.view('loginpage.pug', { request, error: 'Error during Pixiv setup' });
+    }
+
     const secretKey = 'pixivimageviewer';
     try {
       // Setup the Pixiv object using the provided refresh token

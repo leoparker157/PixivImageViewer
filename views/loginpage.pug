@@ -4,21 +4,9 @@ block content
   .container
     .row.justify-content-center.mt-5
       .col-md-6
-        .card
-          .card-header.text-center
-            h2 Pixiv Login
-          .card-body
-            p.text-danger.text-center
-              | Please note: Pixiv no longer supports login using username and password. To obtain your refresh token, you can follow this method:
-              a(href="https://gist.github.com/ZipFile/c9ebedb224406f4f11845ab700124362" target="_blank") link
-              |  or 
-              a(href="https://gist.github.com/upbit/6edda27cb1644e94183291109b8a5fde" target="_blank") link
-              | , or you can use another 3rd-party application to obtain it.
             form(action="/login", method="POST")
               .mb-3
-                label(for="refreshToken" class="form-label") Refresh Token:
-                input(type="text", class="form-control", id="refreshToken", name="refreshToken", placeholder="Enter your refresh token" required)
               if error
                 p.text-danger.text-center= error
               .text-center.mt-3
-                button(type="submit" class="btn btn-primary") Login
+                button(type="submit" class="btn btn-primary btn-lg") Login to Pixiv
