@@ -16,9 +16,7 @@ block content
               | , or you can use another 3rd-party application to obtain it.
             form(action="/login", method="POST")
               .mb-3
-                label(for="refreshToken" class="form-label") Refresh Token:
-                input(type="text", class="form-control", id="refreshToken", name="refreshToken", placeholder="Enter your refresh token" required)
               if error
                 p.text-danger.text-center= error
               .text-center.mt-3
-                button(type="submit" class="btn btn-primary") Login
+                button(type="submit" class="btn btn-primary btn-lg") Login to Pixiv
