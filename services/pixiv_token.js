@@ -37,6 +37,7 @@ async function login() {
     await client.send('Network.enable');
 
     let code = null;
+
     client.on('Network.requestWillBeSent', (params) => {
         if (params.request.url.startsWith('pixiv://')) {
             const url = new URL(params.request.url);
@@ -44,14 +45,11 @@ async function login() {
         }
     });
 
-    // Wait for the login redirection
-    while (true) {
-        const currentUrl = await page.url();
-        if (currentUrl.startsWith("https://accounts.pixiv.net/post-redirect")) {
-            break;
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000));
-    }
+    // Wait for the login redirection and for the code to be captured
+    await page.waitForFunction(
+        () => window.location.href.startsWith("https://accounts.pixiv.net/post-redirect"),
+        { timeout: 60000 }
+    );
 
     // Allow time for the network event to be captured
     await new Promise(resolve => setTimeout(resolve, 1000));
